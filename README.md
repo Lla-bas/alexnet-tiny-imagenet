@@ -20,9 +20,9 @@ The adaptation reduces the stem's downsampling so the trunk naturally produces t
 | conv1 stride | 4 | 2 |
 | pool1 stride | 2 | 1 |
 | conv trunk 64x64 | 64->15->7->7->3->3->3->1 | 64->29->27->27->13->13->13->6 |
-| conv MACs / image | ~15 M | ~144 M |
+| conv MACs / image | ~65.8 M | ~1.00 G |
 | FC MACs / image | ~55 M | ~55 M (same head) |
-| total MACs / image |	~70 M|	~199 M |
+| total MACs / image | ~121.2 M | ~1.06 G |
 | params | ~60 M | ~60 M |
 
 ## Dataset
@@ -56,7 +56,7 @@ Both models overfit severely. Training accuracy reaches 88% / 95% while validati
 plateaus in the high 30s / high 40s. This result is not unexpected for AlexNet applied to small datasets,
 especially since batch normalization was not used
 
-The 14 points gap quantifies the cost of the original AlexNet's aggressive downsampling applied to 64×64 input. The trunk collapses to a 1x1 feature map, and AdaptiveAvgPool2d((6,6)) can only broadcast that single vector into the FC input. It cannot recover spatial information the stem already discarded. Reducing the stem stride so the trunk produces a real 6x6 map is worth ~14 pp of validation accuracy for ~3x the total MACs.
+The 14 points gap quantifies the cost of the original AlexNet's aggressive downsampling applied to 64×64 input. The trunk collapses to a 1x1 feature map, and AdaptiveAvgPool2d((6,6)) can only broadcast that single vector into the FC input. It cannot recover spatial information the stem already discarded. Reducing the stem stride so the trunk produces a real 6x6 map is worth ~14 pp of validation accuracy for ~8.7x the total MACs.
 
 This also makes comparisons with newer models on the same dataset fair. The performance gap ResNet18 would show can then be  attributable to BatchNorm and residual connections, not to a flawed feature map at 64x64.
 
